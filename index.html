@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="author" content="Yuranest" />
+    <meta name="description" content="Electropolishing" />
+    <meta name="keywords" content="Electropolishing" />
+    <title>Electropolish Calculator</title>
+    <link rel="stylesheet" href="./pages/index.css" />
+  </head>
+  <body>
+    <div class="container">
+      <h1>Cycle Calculator</h1>
+      <label for="initialWeight">Initial Weight (e.g., 12.86):</label>
+      <input
+        type="number"
+        id="initialWeight"
+        placeholder="Enter initial weight"
+        step="0.01"
+      />
+
+      <label for="desiredWeight">Desired Final Weight (e.g., 6.95):</label>
+      <input
+        type="number"
+        id="desiredWeight"
+        placeholder="Enter desired final weight"
+        step="0.01"
+      />
+
+      <label for="weightLossPerCycle"
+        >Weight Loss per Cycle (e.g., 0.11):</label
+      >
+      <input
+        type="number"
+        id="weightLossPerCycle"
+        placeholder="Enter weight loss per cycle"
+        step="0.01"
+      />
+
+      <button onclick="calculateCycles()">Calculate Cycles</button>
+
+      <div class="result" id="result"></div>
+    </div>
+
+    <script>
+      function calculateCycles() {
+        // Fetch values from input fields
+        const initialWeight = parseFloat(
+          document.getElementById("initialWeight").value
+        );
+        const desiredWeight = parseFloat(
+          document.getElementById("desiredWeight").value
+        );
+        const weightLossPerCycle = parseFloat(
+          document.getElementById("weightLossPerCycle").value
+        );
+
+        // Validate inputs
+        if (
+          isNaN(initialWeight) ||
+          isNaN(desiredWeight) ||
+          isNaN(weightLossPerCycle) ||
+          weightLossPerCycle <= 0
+        ) {
+          document.getElementById("result").innerHTML =
+            "Please enter valid numbers for all fields.";
+          return;
+        }
+
+        // Calculate the number of cycles required
+        const cycles = (initialWeight - desiredWeight) / weightLossPerCycle;
+
+        if (cycles < 0) {
+          document.getElementById("result").innerHTML =
+            "The desired weight is higher than the initial weight, or weight loss per cycle is too small.";
+        } else {
+          document.getElementById(
+            "result"
+          ).innerHTML = `You need approximately <strong>${Math.ceil(
+            cycles
+          )}</strong> cycles to reach your desired weight.`;
+        }
+      }
+    </script>
+  </body>
+</html>
