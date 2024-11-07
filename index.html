@@ -5,14 +5,48 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="author" content="Yuranest" />
     <meta name="description" content="Electropolishing" />
-    <meta name="keywords" content="Electropolishing" />
+    <meta name="keywords" content="Electropolishing, MSA" />
     <title>Electropolish Calculator</title>
     <link rel="stylesheet" href="./pages/index.css" />
   </head>
   <body>
     <div class="container">
-      <h1>Cycle Calculator</h1>
-      <label for="initialWeight">Initial Weight (e.g., 12.86):</label>
+      <h1>Electropolishing Calculator</h1>
+
+      <!-- Step 1: Estimate weight loss per cycle -->
+      <h2>Step 1: Estimate Weight Loss per Cycle</h2>
+      <label for="initialWeightTest">Initial Weight (Test):</label>
+      <input
+        type="number"
+        id="initialWeightTest"
+        placeholder="Enter initial weight"
+        step="0.01"
+      />
+
+      <label for="finalWeightTest">Final Weight (Test):</label>
+      <input
+        type="number"
+        id="finalWeightTest"
+        placeholder="Enter final weight after test"
+        step="0.01"
+      />
+
+      <label for="cyclesTest">Number of Cycles (Test):</label>
+      <input
+        type="number"
+        id="cyclesTest"
+        placeholder="Enter number of test cycles"
+        step="1"
+      />
+
+      <button onclick="estimateWeightLoss()">
+        Estimate Weight Loss per Cycle
+      </button>
+      <div class="result" id="resultWeightLoss"></div>
+
+      <!-- Step 2: Calculate required cycles -->
+      <h2>Step 2: Calculate Required Cycles</h2>
+      <label for="initialWeight">Initial Weight:</label>
       <input
         type="number"
         id="initialWeight"
@@ -20,17 +54,15 @@
         step="0.01"
       />
 
-      <label for="desiredWeight">Desired Final Weight (e.g., 6.95):</label>
+      <label for="desiredWeight">Desired Final Weight:</label>
       <input
         type="number"
         id="desiredWeight"
-        placeholder="Enter desired final weight"
+        placeholder="Enter desired weight"
         step="0.01"
       />
 
-      <label for="weightLossPerCycle"
-        >Weight Loss per Cycle (e.g., 0.11):</label
-      >
+      <label for="weightLossPerCycle">Weight Loss per Cycle:</label>
       <input
         type="number"
         id="weightLossPerCycle"
@@ -38,14 +70,45 @@
         step="0.01"
       />
 
-      <button onclick="calculateCycles()">Calculate Cycles</button>
-
-      <div class="result" id="result"></div>
+      <button onclick="calculateCycles()">Calculate Required Cycles</button>
+      <div class="result" id="resultCycles"></div>
     </div>
 
     <script>
+      function estimateWeightLoss() {
+        const initialWeightTest = parseFloat(
+          document.getElementById("initialWeightTest").value
+        );
+        const finalWeightTest = parseFloat(
+          document.getElementById("finalWeightTest").value
+        );
+        const cyclesTest = parseInt(
+          document.getElementById("cyclesTest").value
+        );
+
+        if (
+          isNaN(initialWeightTest) ||
+          isNaN(finalWeightTest) ||
+          isNaN(cyclesTest) ||
+          cyclesTest <= 0
+        ) {
+          document.getElementById("resultWeightLoss").innerHTML =
+            "Please enter valid test data.";
+          return;
+        }
+
+        const weightLossPerCycle =
+          (initialWeightTest - finalWeightTest) / cyclesTest;
+        document.getElementById("weightLossPerCycle").value =
+          weightLossPerCycle.toFixed(3); // Auto-fill for next step
+        document.getElementById(
+          "resultWeightLoss"
+        ).innerHTML = `Estimated weight loss per cycle: <strong>${weightLossPerCycle.toFixed(
+          3
+        )}</strong> g.`;
+      }
+
       function calculateCycles() {
-        // Fetch values from input fields
         const initialWeight = parseFloat(
           document.getElementById("initialWeight").value
         );
@@ -56,27 +119,25 @@
           document.getElementById("weightLossPerCycle").value
         );
 
-        // Validate inputs
         if (
           isNaN(initialWeight) ||
           isNaN(desiredWeight) ||
           isNaN(weightLossPerCycle) ||
           weightLossPerCycle <= 0
         ) {
-          document.getElementById("result").innerHTML =
-            "Please enter valid numbers for all fields.";
+          document.getElementById("resultCycles").innerHTML =
+            "Please enter valid values for all fields.";
           return;
         }
 
-        // Calculate the number of cycles required
         const cycles = (initialWeight - desiredWeight) / weightLossPerCycle;
 
         if (cycles < 0) {
-          document.getElementById("result").innerHTML =
-            "The desired weight is higher than the initial weight, or weight loss per cycle is too small.";
+          document.getElementById("resultCycles").innerHTML =
+            "Desired weight is higher than the initial weight. Please check your values.";
         } else {
           document.getElementById(
-            "result"
+            "resultCycles"
           ).innerHTML = `You need approximately <strong>${Math.ceil(
             cycles
           )}</strong> cycles to reach your desired weight.`;
